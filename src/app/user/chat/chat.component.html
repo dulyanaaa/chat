@@ -1,0 +1,37 @@
+<div class="container mt-4">
+  <h3 class="text-center">Chat Application</h3>
+
+  <!-- Group Selection -->
+  <div class="mb-3">
+    <label for="groupSelect" class="form-label">Select Group</label>
+    <select id="groupSelect" class="form-select" (change)="onGroupChange($event)">
+      <option value="">-- Select Group --</option>
+      <option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</option>
+    </select>
+  </div>
+
+  <!-- Channel Selection -->
+  <div class="mb-3" *ngIf="selectedGroup">
+    <label for="channelSelect" class="form-label">Select Channel</label>
+    <select id="channelSelect" class="form-select" (change)="onChannelChange($event)">
+      <option value="">-- Select Channel --</option>
+      <option *ngFor="let channel of channels" [value]="channel.id">{{ channel.name }}</option>
+    </select>
+  </div>
+
+  <!-- Chat Area -->
+  <div *ngIf="selectedChannel" class="mt-4">
+    <h5>Chat in {{ selectedChannel.name }}</h5>
+    <div class="chat-messages" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
+      <div *ngFor="let message of messages" class="message">
+        <strong>User {{ message.userId }}:</strong> {{ message.content }}
+      </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="input-group mt-3">
+      <input type="text" class="form-control" [(ngModel)]="newMessage" placeholder="Type your message here" />
+      <button class="btn btn-primary" (click)="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>

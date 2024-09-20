@@ -1,0 +1,29 @@
+<div class="container mt-4">
+  <h3 class="text-center">Interests for Channels You Administer</h3>
+
+  <!-- Check if there are filtered interests -->
+  <div *ngIf="filteredInterests && filteredInterests.length > 0; else noInterests">
+    <ul class="list-group">
+      <li *ngFor="let interest of filteredInterests"
+        class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          User {{ interest.username }} is interested in Channel {{ interest.channelName }}
+        </span>
+
+        <div>
+          <button class="btn btn-success btn-sm me-2" (click)="approveInterest(interest)">
+            Approve
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="deleteInterest(interest.id)">
+            Delete
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- No interests found -->
+  <ng-template #noInterests>
+    <p class="text-center mt-4">No interests found for the channels you administer.</p>
+  </ng-template>
+</div>

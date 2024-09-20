@@ -1,0 +1,54 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12 col-sm-6 col-md-5 mx-auto">
+      <div class="register-container">
+        <h2 class="text-center register-title">Register</h2>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Form Start -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <!-- Username Input -->
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter your username"
+              formControlName="username" />
+          </div>
+
+          <!-- Email Input -->
+          <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter your email"
+              formControlName="email" />
+          </div>
+
+          <!-- Password Input -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter your password"
+              formControlName="password" />
+          </div>
+
+          <!-- Confirm Password Input -->
+          <div class="mb-3">
+            <label for="confirm-password" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your password"
+              formControlName="confirmPassword" />
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary w-100">Register</button>
+
+          <!-- Login Link -->
+          <div class="mt-3 text-center">
+            <a routerLink="/login" class="text-decoration-none">Already have an account? Login</a>
+          </div>
+        </form>
+        <!-- Form End -->
+      </div>
+    </div>
+  </div>
+</div>

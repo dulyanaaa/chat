@@ -1,0 +1,20 @@
+<div class="dashboard-container">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/groupadmin">Group Admin </a>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="groups" routerLinkActive="active">Groups</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="channels" routerLinkActive="active">Channels</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/logout" routerLinkActive="active">Logout</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="dashboard-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

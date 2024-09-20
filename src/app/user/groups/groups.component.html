@@ -1,0 +1,49 @@
+<div class="container mt-4">
+  <h3 class="text-center">You are a member of the following Groups</h3>
+
+  <!-- Display the list of groups -->
+  <div *ngIf="userGroups && userGroups.length > 0; else noGroups">
+    <ul class="list-group">
+      <li *ngFor="let group of userGroups" class="list-group-item d-flex justify-content-between align-items-center">
+        {{ group.name }}
+        <button class="btn btn-primary btn-sm" (click)="viewGroupChannels(group)">
+          View Channels
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Channels for the selected group -->
+  <div *ngIf="selectedGroup" class="mt-2">
+    <h5>Channels in {{ selectedGroup.name }} group</h5>
+    <!-- Check if there are channels -->
+    <div *ngIf="groupChannels && groupChannels.length > 0; else noChannels">
+      <ul class="list-group mt-2">
+        <li *ngFor="let channel of groupChannels"
+          class="list-group-item d-flex justify-content-between align-items-center">
+          {{ channel.name }}
+          <div>
+            <!-- Show either "Interested?" or "Pending" -->
+            <button *ngIf="!isInterested(channel.id)" class="btn btn-outline-success btn-sm"
+              (click)="markInterested(channel.id)">
+              Interested?
+            </button>
+            <span *ngIf="isInterested(channel.id)" class="badge bg-secondary">
+              Pending
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Message when no channels are available -->
+    <ng-template #noChannels>
+      <p class="text-center mt-4">This group has no channels yet.</p>
+    </ng-template>
+  </div>
+
+  <!-- No groups found -->
+  <ng-template #noGroups>
+    <p class="text-center mt-4">You are not a member of any group.</p>
+  </ng-template>
+</div>

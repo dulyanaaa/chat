@@ -1,0 +1,143 @@
+<div class="container">
+  <h2>Groups</h2>
+
+  <!-- Button to add a new group -->
+  <button class="btn btn-primary mb-3" (click)="toggleAddGroupForm()">
+    Add Group
+  </button>
+
+  <!-- Success message -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Add group form -->
+  <div *ngIf="showAddGroupForm" class="card p-4">
+    <h4>Add New Group</h4>
+    <form (ngSubmit)="addGroup()">
+      <div class="mb-3">
+        <label for="groupName" class="form-label">Group Name</label>
+        <input type="text" class="form-control" id="groupName" [(ngModel)]="newGroup.name" name="groupName" required />
+      </div>
+      <button type="submit" class="btn btn-success w-100">Submit</button>
+    </form>
+  </div>
+
+  <!-- Groups List Table -->
+  <table class="table table-bordered mt-4">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Group Name</th>
+        <th>Admin IDs</th>
+        <th>Member IDs</th>
+        <th>Channels</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let group of groups">
+        <td>{{ group.id }}</td>
+        <td>{{ group.name }}</td>
+        <td>{{ group.adminIds.join(", ") }}</td>
+        <td>{{ group.members.join(", ") }}</td>
+        <td>
+          <span *ngFor="let channel of group.channels; let i = index">
+            {{ channel
+            }}<span *ngIf="i < group.channels.length - 1">, </span>
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="deleteGroup(group)">
+            Delete
+          </button>
+        </td>
+
+        <td>
+          <button class="btn btn-primary btn-sm" (click)="toggleAddMembersForm(group.id)">
+            Add Members
+          </button>
+
+          <!-- Add Members Form -->
+          <div *ngIf="showAddMembersForm[group.id]" class="mt-2">
+            <select [(ngModel)]="selectedUserId[group.id]" class="form-select">
+              <option *ngFor="let user of availableUsers(group.members)" [value]="user.id">
+                {{ user.username }}
+              </option>
+            </select>
+            <button class="btn btn-success btn-sm mt-2" (click)="addMemberToGroup(group.id, selectedUserId[group.id])">
+              Add
+            </button>
+          </div>
+        </td>
+
+        <td>
+          <button class="btn btn-warning btn-sm" (click)="openRemoveMembersModal(group)">Remove Members</button>
+        </td>
+
+        <td>
+          <!-- Add Channel Button -->
+          <button class="btn btn-info btn-sm" (click)="openAddChannelModal(group)">Add Channel</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Add Channel Modal -->
+<div class="modal fade" id="addChannelModal" tabindex="-1" aria-labelledby="addChannelModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addChannelModalLabel">Add Channel to {{ selectedGroup.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="channelName" class="form-label">Channel Name</label>
+            <input type="text" class="form-control" id="channelName" [(ngModel)]="newChannelName" name="channelName"
+              required />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" (click)="addChannelToGroup()">Save Channel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Members Modal -->
+<div class="modal fade" id="removeMembersModal" tabindex="-1" aria-labelledby="removeMembersModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="removeMembersModalLabel">Remove Members from {{ selectedGroup.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div *ngFor="let member of selectedGroup?.members">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" [id]="'member-' + member"
+                [(ngModel)]="membersToRemove[member]" name="removeMemberCheckbox" />
+              <label class="form-check-label" [for]="'member-' + member">
+                {{ getUsername(member) }} <!-- Assuming you have a function to get the username from the ID -->
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" (click)="removeSelectedMembers()">Remove Selected</button>
+      </div>
+    </div>
+  </div>
+</div>
