@@ -29,19 +29,19 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUserId = this.userService.getCurrentUserId(); // Get current user ID
-    if (this.currentUserId) {
+
+    if (!isNaN(this.currentUserId)) {
       this.loadChannels();
     }
   }
 
   loadChannels(): void {
     // Fetch channels where the current user is a member
-    this.channels = this.channelService
-      .getChannels()
-      .filter(
-        (channel) =>
-          channel.members && channel.members.includes(this.currentUserId)
-      );
+    this.channels = this.channelService.getChannels();
+    // .filter(
+    //   (channel) =>
+    //     channel.members && channel.members.includes(this.currentUserId)
+    // );
 
     if (this.channels.length > 0) {
       this.selectedChannel = this.channels[0]; // Automatically select the first channel

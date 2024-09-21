@@ -4,17 +4,18 @@ import { localStorageService } from './local-storage.service';
 import { UserService } from './user.service';
 import { Interest } from '../models/interest.model';
 import { Observable, of } from 'rxjs';
+import { ChannelService } from './channel.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InterestService {
   private interests: Interest[] = []; // Array to store interests
-  channelService: any;
 
   constructor(
     private localStorageService: localStorageService,
-    private UserService: UserService
+    private UserService: UserService,
+    private channelService: ChannelService
   ) {
     this.loadInterests();
   }

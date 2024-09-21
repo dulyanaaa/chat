@@ -1,17 +1,34 @@
 import { Injectable } from '@angular/core';
 import { Channel } from '../models/channel.model';
 import { localStorageService } from './local-storage.service';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChannelService {
-  updateChannelMembers(id: any, members: any) {
-    let channel = this.getChannelById(id);
+  private channels: Channel[] = [];
+  updateChannelMembers(channelId: number, members: any): Observable<any> {
+    this.channels = this.getChannels();
+    const channel = this.getChannelById(channelId); // Find the channel by ID
+
     if (channel) {
-      channel.members = members;
-      this.updateChannel(channel);
+      channel.members = members; // Update the members array
+      let found_channel = this.channels.find((c) => c.id == channel.id) || {
+        id: -1,
+        name: '',
+        groupId: -1,
+        members: [],
+      };
+      found_channel.members = members;
+      this.saveChannels(); // Save the updated channels list to storage
+      return of({ success: true }); // Return observable with success
+    } else {
+      return of({ success: false, message: 'Channel not found' }); // Handle case where channel isn't found
     }
+  }
+  private saveChannels(): void {
+    localStorage.setItem('channels', JSON.stringify(this.channels));
   }
   private storageKey = 'channels';
 
@@ -31,9 +48,16 @@ export class ChannelService {
     return this.localStorageService.getItem(this.storageKey).length || 0;
   }
 
-  getChannelById(id: number): Channel | undefined {
+  getChannelById(id: any): Channel | undefined {
     const channels = this.getChannels();
-    return channels.find((channel: Channel) => channel.id === id);
+    return (
+      channels.find((channel: Channel) => channel.id == id) || {
+        id: -1,
+        name: '',
+        groupId: -1,
+        members: [],
+      }
+    );
   }
 
   // Method to get channels by group ID from localStorage

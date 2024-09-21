@@ -60,8 +60,16 @@ export class UserService {
     return this.users.filter((user) => !user.roles.includes('Super Admin'));
   }
 
-  getCurrentUserId(): number | null {
+  getCurrentUserId(): number {
     const currentUser = this.getCurrentUser();
-    return currentUser ? currentUser.id : null;
+    return currentUser ? currentUser.id : -1;
+  }
+
+  removeGroupFromUser(userId: number, groupId: number): void {
+    const user = this.getUserById(userId);
+    if (user) {
+      user.groups = user.groups.filter((id) => id !== groupId);
+      this.updateUser(user);
+    }
   }
 }

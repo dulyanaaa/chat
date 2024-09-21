@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { UsersComponent } from './superadmin/users/users.component';
 import { GroupsComponent } from './superadmin/groups/groups.component';
 import { ChannelsComponent } from './superadmin/channels/channels.component';
+import { ChatComponent as SuperAdminChatComponent } from './superadmin/chat/chat.component';
 import { LoginComponent } from './auth/login/login.component';
 import { HomeComponent } from './auth/home/home.component';
 import { RegisterComponent } from './auth/register/register.component';
@@ -13,11 +14,13 @@ import { LogoutComponent } from './auth/logout/logout.component';
 import { LayoutComponent as AdminLayout } from './admin/layout/layout.component';
 import { GroupsComponent as AdminGroup } from './admin/groups/groups.component';
 import { ChannelsComponent as AdminChannel } from './admin/channels/channels.component';
+import { ChatComponent as AdminChatComponent } from './admin/chat/chat.component';
+import { InterestsComponent } from './admin/interests/interests.component';
 
 import { LayoutComponent as UserLayout } from './user/layout/layout.component';
 import { ChatComponent } from './user/chat/chat.component';
 import { GroupsComponent as UserGroups } from './user/groups/groups.component';
-import { InterestsComponent } from './admin/interests/interests.component';
+import { DeleteComponent } from './user/delete/delete.component';
 
 export const routes: Routes = [
   { path: 'config', component: ConfigComponent },
@@ -38,6 +41,7 @@ export const routes: Routes = [
       { path: 'groups', component: GroupsComponent },
       { path: 'users', component: UsersComponent },
       { path: 'channels', component: ChannelsComponent },
+      { path: 'chats', component: SuperAdminChatComponent },
     ],
   },
   {
@@ -48,6 +52,7 @@ export const routes: Routes = [
       { path: 'groups', component: AdminGroup },
       { path: 'channels', component: AdminChannel },
       { path: 'interests', component: InterestsComponent },
+      { path: 'chats', component: AdminChatComponent },
     ],
   },
   {
@@ -57,6 +62,7 @@ export const routes: Routes = [
       { path: '', component: UserGroups },
       { path: 'groups', component: UserGroups },
       { path: 'chat', component: ChatComponent },
+      { path: 'delete', component: DeleteComponent },
     ],
   },
   { path: 'login', component: LoginComponent },

@@ -6,6 +6,7 @@ import { ChannelService } from '../../services/channel.service';
 import { ChatService } from '../../services/chat.service';
 import { Channel } from '../../models/channel.model';
 import { Chat } from '../../models/chat.model';
+import { GroupService } from '../../services/group.service';
 
 @Component({
   selector: 'app-chat',
@@ -24,7 +25,8 @@ export class ChatComponent implements OnInit {
   constructor(
     private userService: UserService,
     private channelService: ChannelService,
-    private chatService: ChatService // Injecting ChatService
+    private chatService: ChatService, // Injecting ChatService
+    private groupService: GroupService // Injecting ChatService
   ) {}
 
   ngOnInit(): void {
@@ -35,17 +37,33 @@ export class ChatComponent implements OnInit {
   }
 
   loadChannels(): void {
-    // Fetch channels where the current user is a member
-    this.channels = this.channelService
-      .getChannels()
-      .filter(
-        (channel) =>
-          channel.members && channel.members.includes(this.currentUserId)
-      );
+    const allChannels = this.channelService.getChannels();
+
+    const adminUserId = this.userService.getCurrentUserId();
+
+    this.channels = allChannels.filter((channel) => {
+      const isMember = channel.members && channel.members.includes(adminUserId);
+
+      const isGroupAdmin =
+        channel.groupId && this.isAdminInGroup(channel.groupId, adminUserId);
+
+      return isMember || isGroupAdmin;
+    });
 
     if (this.channels.length > 0) {
-      this.selectedChannel = this.channels[0]; // Automatically select the first channel
-      this.loadMessages(); // Load messages for the selected channel
+      this.selectedChannel = this.channels[0];
+      this.loadMessages();
+    }
+  }
+
+  private isAdminInGroup(groupId: number, userId: number): boolean {
+    const found_group = this.groupService
+      .getGroups()
+      .find((g) => g.id == groupId);
+    if (found_group) {
+      return found_group.adminIds.includes(userId);
+    } else {
+      return false;
     }
   }
 

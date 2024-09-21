@@ -1,86 +1,73 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { InterestService } from '../../services/interest.service';
-import { GroupService } from '../../services/group.service';
-import { UserService } from '../../services/user.service';
 import { ChannelService } from '../../services/channel.service';
-import { Group } from '../../models/group.model';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-interests',
   standalone: true,
+  selector: 'app-interests',
   imports: [CommonModule, FormsModule],
   templateUrl: './interests.component.html',
-  styleUrl: './interests.component.css',
 })
-export class InterestsComponent {
-  allInterests: any[] = []; // This will store all interests
-  filteredInterests: any[] = []; // This will store interests that match the criteria
-  currentUserId: number; // Logged-in user's ID
-  groupsAdmin: any[] = []; // Groups where the current user is an admin
+export class InterestsComponent implements OnInit {
+  filteredInterests: any[] = []; // Array to store filtered interests
 
   constructor(
     private interestService: InterestService,
-    private groupService: GroupService,
-    private userService: UserService,
-    private ChannelService: ChannelService
-  ) {
-    this.currentUserId = this.userService.getCurrentUserId() || -1; // Get current logged-in user ID
-    this.loadAdminGroups();
+    private channelService: ChannelService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadInterests();
   }
 
-  // Load groups where the current user is an admin
-  loadAdminGroups(): void {
-    this.groupService
-      .getGroupsByAdminId(this.currentUserId)
-      .subscribe((groups) => {
-        this.groupsAdmin = groups;
-        this.loadInterests();
+  // Load all interests (assuming you've set up some filtering logic)
+  loadInterests(): void {
+    this.interestService
+      .getAllInterestsWithUsernameChannelName()
+      .subscribe((interests) => {
+        this.filteredInterests = interests;
       });
   }
 
-  // Load all interests and filter them based on group channels and adminId
-  loadInterests(): void {
-    this.allInterests = this.interestService.getAllInterests(); // Fetch all interests
-
-    this.filteredInterests = this.allInterests.filter((interest) => {
-      // Check if interest's channelId exists in any of the admin's group channels
-      return this.groupsAdmin.some(
-        (group) =>
-          group.channels.includes(interest.channelId) &&
-          group.adminIds.includes(this.currentUserId)
-      );
-    });
-  }
-
+  // Approve interest and add user to channel
   approveInterest(interest: any): void {
-    // Find the relevant group that the logged-in admin manages and includes the interest's channelId
+    const channel = this.channelService.getChannelById(interest.channelId);
 
-    this.groupsAdmin.forEach((g) => {
-      if (g.channels.include && g.channels.include(interest.channelId)) {
-        const channel = g.channels.find(
-          (channel: { id: number }) => channel.id === interest.channelId
-        );
+    if (channel) {
+      // Check if the user is already a member
+      if (channel.members && !channel.members.includes(interest.userId)) {
+        // Add the user to channel members array
+        channel.members && channel.members.push(interest.userId);
 
-        // Check if the channel and group exist, and if the user is not already in the channel members
-        if (channel && !channel.members.includes(interest.userId)) {
-          // Add the user to the channel members array
-          channel.members.push(interest.userId);
-
-          // Call the ChannelService to update the channel members on the backend
-          this.ChannelService.updateChannelMembers(channel.id, channel.members);
-          this.deleteInterest(interest.id);
-        } else {
-          console.log('User is already a member of this channel.');
-        }
+        // Call the service to update channel members
+        this.channelService
+          .updateChannelMembers(channel.id, channel.members)
+          .subscribe({
+            next: () => {
+              console.log(
+                `User ${interest.userId} added to channel ${channel.id} successfully.`
+              );
+              // Remove interest after approval
+              this.deleteInterest(interest.id);
+            },
+            error: (err) => {
+              console.error('Failed to update channel members:', err);
+            },
+          });
       } else {
-        console.log('not found');
+        console.log('User is already a member of this channel.');
       }
-    });
+    } else {
+      console.error('Channel not found.');
+    }
   }
 
+  // Delete the interest
   deleteInterest(interestId: number): void {
     this.interestService.removeInterest(interestId);
+    // Optionally refresh the interests list after deleting
+    this.loadInterests();
   }
 }

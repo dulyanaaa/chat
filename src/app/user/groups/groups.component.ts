@@ -61,4 +61,22 @@ export class GroupsComponent {
   markInterested(channelId: number): void {
     this.interestService.addInterest(this.currentUserId, channelId);
   }
+
+  leaveGroup(group: Group): void {
+    group.members = group.members.filter(
+      (memberId) => Number(memberId) !== this.currentUserId
+    );
+    let all_groups = this.groupService.getGroups();
+    let found_group = all_groups.find((g) => g.id == group.id);
+    if (found_group) {
+      found_group.members = group.members;
+      this.groupService.updateGroups(all_groups);
+    }
+
+    this.userGroups = this.userGroups.filter(
+      (userGroup) => userGroup.id !== group.id
+    );
+
+    this.userService.removeGroupFromUser(this.currentUserId, group.id);
+  }
 }
