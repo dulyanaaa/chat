@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
@@ -16,10 +16,14 @@ import { Chat } from '../../models/chat.model';
 })
 export class ChatComponent implements OnInit {
   channels: Channel[] = []; // List of channels where the user is a member
+  filteredChannelList: Channel[] = [];
   selectedChannel: Channel | null = null; // Currently selected channel
   messages: Chat[] = []; // Array of messages for the selected channel
   newMessage: string = ''; // New message input
   currentUserId: number = -1; // ID of the current logged-in user
+  searchQuery: string = '';
+
+  @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;
 
   constructor(
     private userService: UserService,
@@ -43,6 +47,8 @@ export class ChatComponent implements OnInit {
     //     channel.members && channel.members.includes(this.currentUserId)
     // );
 
+    this.filteredChannelList = this.channels; // Initially, show all channels
+
     if (this.channels.length > 0) {
       this.selectedChannel = this.channels[0]; // Automatically select the first channel
       this.loadMessages(); // Load messages for the selected channel
@@ -59,15 +65,31 @@ export class ChatComponent implements OnInit {
       this.messages = this.chatService.getChatsByChannelId(
         this.selectedChannel.id
       ); // Load messages from the service
-      console.log(`Loaded messages for channel ${this.selectedChannel.name}`);
+      this.scrollToBottom();
+    }
+  }
+  scrollToBottom(): void {
+    try {
+      setTimeout(() => {
+        this.chatMessagesContainer.nativeElement.scrollTop =
+          this.chatMessagesContainer.nativeElement.scrollHeight;
+      }, 100);
+    } catch (err) {
+      console.error('Scroll error:', err);
     }
   }
 
   sendMessage(): void {
     if (this.newMessage.trim() && this.selectedChannel) {
+      let user = this.userService.getUserById(this.currentUserId);
+      let username = '';
+      if (user) {
+        username = user.username;
+      }
       const message: Chat = {
         messageId: 0, // Temporary, will be generated in the service
         userId: this.currentUserId!,
+        username: username,
         timestamp: new Date(),
         channelId: this.selectedChannel.id,
         content: this.newMessage,
@@ -83,5 +105,11 @@ export class ChatComponent implements OnInit {
         }
       });
     }
+  }
+
+  filteredChannels(): Channel[] {
+    return this.channels.filter((channel) =>
+      channel.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
   }
 }

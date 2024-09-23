@@ -5,9 +5,19 @@
     <!-- Left-side: List of Channels -->
     <div class="col-md-4">
       <h5>Channels</h5>
+      <input
+        type="text"
+        class="form-control mb-3"
+        placeholder="Search channels..."
+        [(ngModel)]="searchQuery"
+      />
       <ul class="list-group">
-        <li *ngFor="let channel of channels" class="list-group-item" [class.active]="channel === selectedChannel"
-          (click)="selectChannel(channel)">
+        <li
+          *ngFor="let channel of filteredChannels()"
+          class="list-group-item"
+          [class.active]="channel === selectedChannel"
+          (click)="selectChannel(channel)"
+        >
           {{ channel.name }}
         </li>
       </ul>
@@ -16,16 +26,33 @@
     <!-- Right-side: Chat Area -->
     <div class="col-md-8" *ngIf="selectedChannel">
       <h5>Chat in {{ selectedChannel.name }}</h5>
-      <div class="chat-messages" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
+      <div
+        #chatMessagesContainer
+        class="chat-messages"
+        style="
+          border: 1px solid #ccc;
+          padding: 10px;
+          height: 300px;
+          overflow-y: auto;
+        "
+      >
         <div *ngFor="let message of messages" class="message">
-          <strong>User {{ message.userId }}:</strong> {{ message.content }}
-          <small class="text-muted float-end">{{ message.timestamp | date:'shortTime' }}</small>
+          <strong>User {{ message.username }}:</strong> {{ message.content }}
+          <small class="text-muted float-end">{{
+            message.timestamp | date : "shortTime"
+          }}</small>
         </div>
       </div>
 
       <!-- Message Input -->
       <div class="input-group mt-3">
-        <input type="text" class="form-control" [(ngModel)]="newMessage" placeholder="Type your message here" />
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="newMessage"
+          placeholder="Type your message here"
+          (keydown.enter)="sendMessage()"
+        />
         <button class="btn btn-primary" (click)="sendMessage()">Send</button>
       </div>
     </div>

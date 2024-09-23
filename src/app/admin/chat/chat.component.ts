@@ -83,9 +83,15 @@ export class ChatComponent implements OnInit {
 
   sendMessage(): void {
     if (this.newMessage.trim() && this.selectedChannel) {
+      let user = this.userService.getUserById(this.currentUserId);
+      let username = '';
+      if (user) {
+        username = user.username;
+      }
       const message: Chat = {
-        messageId: 0, // Temporary, will be generated in the service
+        messageId: 0,
         userId: this.currentUserId!,
+        username: username,
         timestamp: new Date(),
         channelId: this.selectedChannel.id,
         content: this.newMessage,

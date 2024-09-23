@@ -48,7 +48,7 @@ export class ChannelService {
     return this.localStorageService.getItem(this.storageKey).length || 0;
   }
 
-  getChannelById(id: any): Channel | undefined {
+  getChannelById(id: any): Channel {
     const channels = this.getChannels();
     return (
       channels.find((channel: Channel) => channel.id == id) || {

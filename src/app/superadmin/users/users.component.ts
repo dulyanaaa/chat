@@ -251,6 +251,7 @@ export class UsersComponent {
     }
 
     this.newUser.id = ++this.usersLength;
+    this.newUser.roles = ['User'];
     this.userService.addUser(this.newUser);
     this.loadUsers();
     this.successMessage = 'User added successfully!';

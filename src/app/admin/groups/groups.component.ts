@@ -126,6 +126,9 @@ export class GroupsComponent {
     //   // (id) => id !== this.loggedinAdminId
     // );
     this.membersToRemove = {}; // Reset the removal list
+    group.members = group.members.filter(
+      (m) => parseInt(m) != this.loggedinAdminId
+    );
     group.members.forEach((member) => {
       this.membersToRemove[member] = false; // Initialize all checkboxes as unchecked
     });
