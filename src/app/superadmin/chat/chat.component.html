@@ -77,6 +77,7 @@
           overflow-y: auto;
         "
       >
+<<<<<<< HEAD
         <div
           *ngFor="let message of messages"
           class="message"
@@ -87,6 +88,13 @@
         >
           <strong>{{ message.username }}:</strong> {{ message.content }}
           <small>{{ message.timestamp | date : "shortTime" }}</small>
+=======
+        <div *ngFor="let message of messages" class="message">
+          <strong>User {{ message.username }}:</strong> {{ message.content }}
+          <small class="text-muted float-end">{{
+            message.timestamp | date : "shortTime"
+          }}</small>
+>>>>>>> 05bdf0d35506c5d6d12f2a487eb9e014b987d831
         </div>
         <!-- <div *ngFor="let message of messages" class="message">
           <strong>User {{ message.username }}:</strong> {{ message.content }}

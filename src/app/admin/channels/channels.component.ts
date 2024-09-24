@@ -7,7 +7,10 @@ import { GroupService } from '../../services/group.service';
 import { ChannelService } from '../../services/channel.service';
 import { UserService } from '../../services/user.service';
 import { InterestService } from '../../services/interest.service';
+<<<<<<< HEAD
 import { Router } from '@angular/router';
+=======
+>>>>>>> 05bdf0d35506c5d6d12f2a487eb9e014b987d831
 
 @Component({
   selector: 'app-channels',
@@ -35,6 +38,7 @@ export class ChannelsComponent {
     private groupService: GroupService,
     private ChannelService: ChannelService,
     private UserService: UserService,
+<<<<<<< HEAD
     private interestService: InterestService,
     private router: Router
   ) {
@@ -49,6 +53,10 @@ export class ChannelsComponent {
       }
     }
   }
+=======
+    private interestService: InterestService
+  ) {}
+>>>>>>> 05bdf0d35506c5d6d12f2a487eb9e014b987d831
 
   ngOnInit() {
     this.loggedinAdminId = this.UserService.getCurrentUserId() || -1;

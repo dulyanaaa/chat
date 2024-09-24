@@ -24,6 +24,7 @@ export class ChatComponent implements OnInit {
   newMessage: string = ''; // New message input
   currentUserId: number = -1; // ID of the current logged-in user
   searchQuery: string = '';
+<<<<<<< HEAD
   currentUser: User = {
     id: -1,
     username: '',
@@ -32,6 +33,8 @@ export class ChatComponent implements OnInit {
     roles: [],
     groups: [],
   };
+=======
+>>>>>>> 05bdf0d35506c5d6d12f2a487eb9e014b987d831
 
   @ViewChild('chatMessagesContainer') chatMessagesContainer!: ElementRef;
 
