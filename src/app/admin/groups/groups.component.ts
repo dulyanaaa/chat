@@ -8,6 +8,7 @@ import { ChannelService } from '../../services/channel.service';
 import { User } from '../../models/user.model';
 import { Channel } from '../../models/channel.model';
 import * as bootstrap from 'bootstrap';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-groups',
@@ -107,8 +108,20 @@ export class GroupsComponent {
   constructor(
     private groupService: GroupService,
     private userService: UserService,
-    private channelService: ChannelService
+    private channelService: ChannelService,
+    private router: Router
   ) {
+    let user = this.userService.getCurrentUser();
+
+    if (user) {
+      if (
+        !user.roles.includes('Super Admin') &&
+        !user.roles.includes('Group Admin')
+      ) {
+        this.router.navigate(['/login']);
+      }
+    }
+
     this.loadGroups();
     this.loggedinAdminId = this.userService.getCurrentUserId() || -1; // Adjust based on how you get the current user ID
     this.groups = this.groups.filter((group) =>
@@ -126,6 +139,9 @@ export class GroupsComponent {
     //   // (id) => id !== this.loggedinAdminId
     // );
     this.membersToRemove = {}; // Reset the removal list
+    group.members = group.members.filter(
+      (m) => parseInt(m) != this.loggedinAdminId
+    );
     group.members.forEach((member) => {
       this.membersToRemove[member] = false; // Initialize all checkboxes as unchecked
     });

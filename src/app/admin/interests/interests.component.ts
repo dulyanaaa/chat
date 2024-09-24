@@ -3,6 +3,8 @@ import { InterestService } from '../../services/interest.service';
 import { ChannelService } from '../../services/channel.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UserService } from '../../services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -15,8 +17,21 @@ export class InterestsComponent implements OnInit {
 
   constructor(
     private interestService: InterestService,
-    private channelService: ChannelService
-  ) {}
+    private channelService: ChannelService,
+    private userService: UserService,
+    private router: Router
+  ) {
+    let user = this.userService.getCurrentUser();
+
+    if (user) {
+      if (
+        !user.roles.includes('Super Admin') &&
+        !user.roles.includes('Group Admin')
+      ) {
+        this.router.navigate(['/login']);
+      }
+    }
+  }
 
   ngOnInit(): void {
     this.loadInterests();

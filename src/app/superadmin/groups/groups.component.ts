@@ -176,11 +176,7 @@ export class GroupsComponent {
   /* ADD MEMBERS TO GROUP START */
   availableUsers(currentMembers: string[]): User[] {
     const allUsers = this.userService.getUsers();
-    return allUsers.filter(
-      (user) =>
-        !user.roles.includes('Super Admin') &&
-        !currentMembers.includes(user.username)
-    );
+    return allUsers.filter((user) => !currentMembers.includes(user.username));
   }
 
   addMemberToGroup(groupId: number, userId: number | null) {
@@ -213,6 +209,38 @@ export class GroupsComponent {
 
   private loadGroups() {
     this.groups = this.groupService.getGroups();
+    this.groups.map((g) => {
+      let admin_usernames = '';
+      g.adminIds.forEach((id) => {
+        let user = this.userService.getUserById(id);
+        admin_usernames += user?.username;
+      });
+    });
+  }
+
+  getChannelNames(channelIds: number[]) {
+    let channelNames: string[] = [];
+    channelIds.forEach((id) => {
+      let channel = this.channelService.getChannelById(id);
+      if (channel) channelNames.push(channel.name);
+    });
+    return channelNames.join();
+  }
+
+  getUserNames(adminIds: number[] | string[]) {
+    let usernames: string[] = [];
+    adminIds.forEach((id) => {
+      let user = this.userService.getUserById(Number(id)) || {
+        id: -1,
+        username: '',
+        email: '',
+        password: '',
+        roles: [],
+        groups: [],
+      };
+      usernames.push(user.username);
+    });
+    return usernames.join();
   }
 
   toggleAddGroupForm() {

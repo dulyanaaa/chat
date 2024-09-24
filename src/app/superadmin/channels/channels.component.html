@@ -2,7 +2,12 @@
   <!-- Group Selection -->
   <div class="mb-3">
     <label for="groupSelect" class="form-label">Select Group</label>
-    <select id="groupSelect" class="form-select" [(ngModel)]="selectedGroupId" (change)="onGroupSelect()">
+    <select
+      id="groupSelect"
+      class="form-select"
+      [(ngModel)]="selectedGroupId"
+      (change)="onGroupSelect()"
+    >
       <option *ngFor="let group of groups" [value]="group.id">
         {{ group.name }}
       </option>
@@ -10,7 +15,7 @@
   </div>
 
   <!-- Channel List -->
-  <div *ngIf="selectedGroupChannels && selectedGroupChannels.length > 0">
+  <div *ngIf="selectedGroupChannels.length > 0">
     <h5>Channels in Group: {{ selectedGroup?.name }}</h5>
     <table class="table table-striped">
       <thead>
@@ -23,10 +28,16 @@
         <tr *ngFor="let channel of selectedGroupChannels">
           <td>{{ channel.name }}</td>
           <td>
-            <button class="btn btn-primary btn-sm" (click)="editChannel(channel)">
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="editChannel(channel)"
+            >
               Edit
             </button>
-            <button class="btn btn-danger btn-sm" (click)="deleteChannel(channel)">
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="deleteChannel(channel)"
+            >
               Delete
             </button>
           </td>
@@ -34,25 +45,63 @@
       </tbody>
     </table>
   </div>
+  <div *ngIf="!selectedGroup && channels && channels.length > 0">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Channel Name</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let channel of channels">
+          <td>{{ channel.name }}</td>
+          <td>
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="editChannel(channel)"
+            >
+              Edit
+            </button>
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="deleteChannel(channel)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-  <!-- No Channels Found -->
-  <div *ngIf="selectedGroupChannels?.length === 0">
+<!-- No Channels Found -->
+<div class="container">
+  <div *ngIf="selectedGroup && selectedGroupChannels?.length === 0">
     <p>No channels available for this group.</p>
   </div>
 </div>
 
 <!-- Edit Channel Form -->
-<div *ngIf="editingChannel" class="mt-4">
-  <h5>Edit Channel</h5>
-  <form (ngSubmit)="updateChannel()">
-    <div class="mb-3">
-      <label for="editChannelName" class="form-label">Channel Name</label>
-      <input type="text" id="editChannelName" [(ngModel)]="editingChannelName" name="editChannelName"
-        class="form-control" />
-      <div *ngIf="errorMessage" class="text-danger mt-2">
-        {{ errorMessage }}
+<div class="container">
+  <div *ngIf="editingChannel" class="mt-4">
+    <h5>Edit Channel</h5>
+    <form (ngSubmit)="updateChannel()">
+      <div class="mb-3">
+        <label for="editChannelName" class="form-label">Channel Name</label>
+        <input
+          type="text"
+          id="editChannelName"
+          [(ngModel)]="editingChannelName"
+          name="editChannelName"
+          class="form-control"
+        />
+        <div *ngIf="errorMessage" class="text-danger mt-2">
+          {{ errorMessage }}
+        </div>
       </div>
-    </div>
-    <button type="submit" class="btn btn-success">Update Channel</button>
-  </form>
+      <button type="submit" class="btn btn-success">Update Channel</button>
+    </form>
+  </div>
 </div>

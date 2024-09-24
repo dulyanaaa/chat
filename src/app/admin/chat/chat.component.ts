@@ -7,6 +7,7 @@ import { ChatService } from '../../services/chat.service';
 import { Channel } from '../../models/channel.model';
 import { Chat } from '../../models/chat.model';
 import { GroupService } from '../../services/group.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chat',
@@ -26,8 +27,20 @@ export class ChatComponent implements OnInit {
     private userService: UserService,
     private channelService: ChannelService,
     private chatService: ChatService, // Injecting ChatService
-    private groupService: GroupService // Injecting ChatService
-  ) {}
+    private groupService: GroupService,
+    private router: Router
+  ) {
+    let user = this.userService.getCurrentUser();
+
+    if (user) {
+      if (
+        !user.roles.includes('Super Admin') &&
+        !user.roles.includes('Group Admin')
+      ) {
+        this.router.navigate(['/login']);
+      }
+    }
+  }
 
   ngOnInit(): void {
     this.currentUserId = this.userService.getCurrentUserId(); // Get current user ID
@@ -83,9 +96,15 @@ export class ChatComponent implements OnInit {
 
   sendMessage(): void {
     if (this.newMessage.trim() && this.selectedChannel) {
+      let user = this.userService.getUserById(this.currentUserId);
+      let username = '';
+      if (user) {
+        username = user.username;
+      }
       const message: Chat = {
-        messageId: 0, // Temporary, will be generated in the service
+        messageId: 0,
         userId: this.currentUserId!,
+        username: username,
         timestamp: new Date(),
         channelId: this.selectedChannel.id,
         content: this.newMessage,

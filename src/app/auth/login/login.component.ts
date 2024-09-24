@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
@@ -16,6 +16,7 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
   errorMessage: string = '';
+  successMessage: string | undefined;
 
   constructor(private userService: UserService, private router: Router) {
     let user = this.userService.getCurrentUser();
@@ -29,6 +30,12 @@ export class LoginComponent {
         this.router.navigate(['/user']);
       }
     }
+  }
+  ngOnInit(): void {
+    const navigation = this.router.getCurrentNavigation();
+
+    if (navigation && navigation.extras.state)
+      this.successMessage = navigation.extras.state['message'];
   }
 
   onSubmit(): void {

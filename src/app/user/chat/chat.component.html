@@ -18,8 +18,9 @@
       <h5>Chat in {{ selectedChannel.name }}</h5>
       <div class="chat-messages" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
         <div *ngFor="let message of messages" class="message">
-          <strong>User {{ message.userId }}:</strong> {{ message.content }}
-          <small class="text-muted float-end">{{ message.timestamp | date:'shortTime' }}</small>
+          <strong>{{ message.username }}:</strong> {{ message.content }}
+          <small class="text-muted float-end" title="{{ message.timestamp | date:'medium' }}">{{ message.timestamp |
+            date:'medium' }}</small>
         </div>
       </div>
 

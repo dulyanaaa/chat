@@ -5,6 +5,9 @@
       <div *ngIf="errorMessage" class="alert alert-danger">
         {{ errorMessage }}
       </div>
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
       <!-- Form Start -->
       <form (ngSubmit)="onSubmit()">
         <!-- username Input -->

@@ -6,6 +6,8 @@ import { Channel } from '../../models/channel.model';
 import { GroupService } from '../../services/group.service';
 import { ChannelService } from '../../services/channel.service';
 import { UserService } from '../../services/user.service';
+import { InterestService } from '../../services/interest.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-channels',
@@ -21,6 +23,8 @@ export class ChannelsComponent {
   selectedGroupId: number | null = null;
   selectedGroupChannels: Channel[] = [];
   selectedGroup: Group | null = null;
+  currentUserId: number = -1;
+  otherGroupChannels: Channel[] = [];
 
   /* EDITING CHANNEL */
   editingChannel: Channel | null = null; // Track the channel being edited
@@ -30,15 +34,48 @@ export class ChannelsComponent {
   constructor(
     private groupService: GroupService,
     private ChannelService: ChannelService,
-    private UserService: UserService
-  ) {}
+    private UserService: UserService,
+    private interestService: InterestService,
+    private router: Router
+  ) {
+    let user = this.UserService.getCurrentUser();
+
+    if (user) {
+      if (
+        !user.roles.includes('Super Admin') &&
+        !user.roles.includes('Group Admin')
+      ) {
+        this.router.navigate(['/login']);
+      }
+    }
+  }
 
   ngOnInit() {
+    this.loggedinAdminId = this.UserService.getCurrentUserId() || -1;
     this.groups = this.groupService.getGroups();
-    this.loggedinAdminId = this.UserService.getCurrentUserId() || -1; // Adjust based on how you get the current user ID
+
+    // Adjust based on how you get the current user ID
     this.groups = this.groups.filter((group) =>
       group.adminIds.includes(this.loggedinAdminId)
     );
+    let otherGroups = this.groupService
+      .getGroups()
+      .filter(
+        (g) =>
+          !g.adminIds.includes(this.loggedinAdminId) &&
+          g.members.includes(String(this.loggedinAdminId))
+      );
+
+    let channels: number[] = [];
+    otherGroups.forEach((g) => {
+      g.channels.forEach((ch) => channels.push(ch));
+    });
+
+    channels.forEach((ch) => {
+      let found_channel = this.ChannelService.getChannelById(ch);
+      if (!found_channel.members?.includes(this.loggedinAdminId))
+        this.otherGroupChannels.push(found_channel);
+    });
     this.channels = this.ChannelService.getChannels();
   }
 
@@ -115,5 +152,16 @@ export class ChannelsComponent {
       (ch) => ch.id !== channel.id
     );
     this.ChannelService.deleteChannel(channel.id);
+  }
+
+  isInterested(channelId: number): boolean {
+    const interests = this.interestService.getInterestsByUserId(
+      this.loggedinAdminId
+    );
+    return interests.some((interest) => interest.channelId === channelId);
+  }
+
+  markInterested(channelId: number): void {
+    this.interestService.addInterest(this.loggedinAdminId, channelId);
   }
 }

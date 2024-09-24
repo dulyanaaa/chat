@@ -21,6 +21,7 @@ export class ChannelsComponent {
   selectedGroupId: number | null = null;
   selectedGroupChannels: Channel[] = [];
   selectedGroup: Group | null = null;
+  filteredChannels: Channel[] = [];
 
   /* EDITING CHANNEL */
   editingChannel: Channel | null = null; // Track the channel being edited
@@ -120,5 +121,6 @@ export class ChannelsComponent {
       (ch) => ch.id !== channel.id
     );
     this.ChannelService.deleteChannel(channel.id);
+    this.channels = this.ChannelService.getChannels();
   }
 }

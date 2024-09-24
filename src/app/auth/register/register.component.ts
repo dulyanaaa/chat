@@ -66,14 +66,5 @@ export class RegisterComponent {
       new User(++usersLength, username, email, password, ['User'], [])
     );
     this.router.navigate(['/login']);
-
-    // .subscribe(
-    //   () => {
-    //     this.router.navigate(['/login']);
-    //   },
-    //   error => {
-    //     this.errorMessage = 'Registration failed. Please try again.';
-    //   }
-    // );
   }
 }
