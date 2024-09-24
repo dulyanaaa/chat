@@ -46,19 +46,10 @@
     <!-- Left-side: List of Channels -->
     <div class="col-md-4">
       <h5>Channels</h5>
-      <input
-        type="text"
-        class="form-control mb-3"
-        placeholder="Search channels..."
-        [(ngModel)]="searchQuery"
-      />
+      <input type="text" class="form-control mb-3" placeholder="Search channels..." [(ngModel)]="searchQuery" />
       <ul class="list-group">
-        <li
-          *ngFor="let channel of filteredChannels()"
-          class="list-group-item"
-          [class.active]="channel === selectedChannel"
-          (click)="selectChannel(channel)"
-        >
+        <li *ngFor="let channel of filteredChannels()" class="list-group-item"
+          [class.active]="channel === selectedChannel" (click)="selectChannel(channel)">
           {{ channel.name }}
         </li>
       </ul>
@@ -67,34 +58,20 @@
     <!-- Right-side: Chat Area -->
     <div class="col-md-8" *ngIf="selectedChannel">
       <h5>Chat in {{ selectedChannel.name }}</h5>
-      <div
-        #chatMessagesContainer
-        class="chat-messages"
-        style="
+      <div #chatMessagesContainer class="chat-messages" style="
           border: 1px solid #ccc;
           padding: 10px;
           height: 300px;
           overflow-y: auto;
-        "
-      >
-<<<<<<< HEAD
-        <div
-          *ngFor="let message of messages"
-          class="message"
-          [ngClass]="{
+        ">
+
+        <div *ngFor="let message of messages" class="message" [ngClass]="{
             'message-sent': message.username === currentUser.username,
             'message-received': message.username !== currentUser.username
-          }"
-        >
+          }">
           <strong>{{ message.username }}:</strong> {{ message.content }}
           <small>{{ message.timestamp | date : "shortTime" }}</small>
-=======
-        <div *ngFor="let message of messages" class="message">
-          <strong>User {{ message.username }}:</strong> {{ message.content }}
-          <small class="text-muted float-end">{{
-            message.timestamp | date : "shortTime"
-          }}</small>
->>>>>>> 05bdf0d35506c5d6d12f2a487eb9e014b987d831
+
         </div>
         <!-- <div *ngFor="let message of messages" class="message">
           <strong>User {{ message.username }}:</strong> {{ message.content }}
@@ -106,13 +83,8 @@
 
       <!-- Message Input -->
       <div class="input-group mt-3">
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="newMessage"
-          placeholder="Type your message here"
-          (keydown.enter)="sendMessage()"
-        />
+        <input type="text" class="form-control" [(ngModel)]="newMessage" placeholder="Type your message here"
+          (keydown.enter)="sendMessage()" />
         <button class="btn btn-primary" (click)="sendMessage()">Send</button>
       </div>
     </div>
